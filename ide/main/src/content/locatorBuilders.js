@@ -354,6 +354,14 @@ LocatorBuilders.add('css', function(e) {
   return "css=" + sub_path;
 });
 
+LocatorBuilders.add('class', function(e) {
+  if (e.class) {
+    return 'class=' + e.class;
+  }
+  return null;
+});
+
+
 /*
  * This function is called from DOM locatorBuilders
  */

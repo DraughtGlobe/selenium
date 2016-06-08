@@ -21,7 +21,12 @@
 function FormatCollection(options, pluginManager) {
     this.options = options;
     this.pluginManager = pluginManager;
-    this.presetFormats = [new InternalFormat(options, "default", "HTML", "html.js", true)];
+    this.presetFormats = [
+        new InternalFormat(options, "default", "HTML", "html.js", true),
+        // PHP
+        new InternalFormat(options, "phpformatter", "PHP / WebDriver", "php/php-wd.js"),
+
+    ];
     this.reloadFormats();
 }
 

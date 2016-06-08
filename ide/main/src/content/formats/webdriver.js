@@ -360,7 +360,10 @@ function newVariable(prefix, index) {
 }
 
 function variableName(value) {
-  return value;
+  /*
+   * Custom hack for php
+   */
+  return '${"'+value+'"}';
 }
 
 function string(value) {
@@ -461,6 +464,7 @@ function formatCommand(command) {
             line = statement(assignToVariable(def.returnType, extraArg, call));
           } else if (command.command.match(/^waitFor/)) {
             eq = seleniumEquals(def.returnType, extraArg, call);
+            // alert(JSON.stringify([eq, def.returnType, extraArg, call]));
             if (def.negative) eq = eq.invert();
             line = waitFor(eq);
           }
@@ -576,8 +580,13 @@ SeleniumWebDriverAdaptor.prototype._elementLocator = function(sel1Locator) {
   if (locator.type == 'name') {
     return locator;
   }
+  if (locator.type == 'class') {
+    return locator;
+  }
   if (sel1Locator.match(/^document/) || locator.type == 'dom') {
-    throw 'Error: Dom locators are not implemented yet!';
+    
+    // throw 'Error: Dom locators are not implemented yet!' + JSON.stringify(locator);
+    return locator;
   }
   if (locator.type == 'ui') {
     throw 'Error: UI locators are not supported!';
@@ -695,6 +704,11 @@ SeleniumWebDriverAdaptor.prototype.getTitle = function() {
 SeleniumWebDriverAdaptor.prototype.getAlert = function() {
   var driver = new WDAPI.Driver();
   return driver.getAlert();
+};
+
+SeleniumWebDriverAdaptor.prototype.selectWindow = function() {
+  var driver = new WDAPI.Driver();
+  return driver.selectWindow(this.rawArgs[0]);
 };
 
 SeleniumWebDriverAdaptor.prototype.isAlertPresent = function() {

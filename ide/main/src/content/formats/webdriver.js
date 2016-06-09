@@ -284,7 +284,7 @@ function xlateArgument(value, type) {
       prefix = "'";
     }
     parts.push(string(prefix + js));
-    return new CallSelenium("getEval", [concatString(parts)]);
+    return new CallSelenium("getEval", [concatString(parts)], [concatString(parts)]);
   } else if ((r = /\$\{/.exec(value))) {
     var regexp = /\$\{(.*?)\}/g;
     var lastIndex = 0;
@@ -793,7 +793,7 @@ SeleniumWebDriverAdaptor.prototype.type = function(elementLocator, text) {
   var locator = this._elementLocator(this.rawArgs[0]);
   var driver = new WDAPI.Driver();
   var webElement = driver.findElement(locator.type, locator.string);
-  return statement(new SeleniumWebDriverAdaptor.SimpleExpression(webElement.clear())) + "\n" + webElement.sendKeys(this.rawArgs[1]);
+  return statement(new SeleniumWebDriverAdaptor.SimpleExpression(webElement.clear())) + "\n" + webElement.type(this.rawArgs[1]);
 };
 
 SeleniumWebDriverAdaptor.prototype.sendKeys = function(elementLocator, text) {

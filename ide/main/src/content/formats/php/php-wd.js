@@ -409,7 +409,7 @@ WDAPI.Driver.searchContext = function(locatorType, locator, more) {
         case 'class':
             return more
                 ? '$this->elements($this->using("css selector")->value(["class=' + locatorString.replace(/"/g, "\\\"") + '"]))'
-                : '$this->byCssSelector(["class=' + locatorString.replace(/"/g, "\\\"") + '"])';
+                : '$this->byCssSelector("[class=' + locatorString.replace(/"/g, "\\\"") + ']")';
         // DOM locators
         case 'implicit':
 
@@ -504,7 +504,7 @@ WDAPI.Driver.searchContext = function(locatorType, locator, more) {
                                     array_index_type_required = true;
                                 break;
                                 case 'childNodes':
-                                    // let's hope all text's are in there own nodes, otherwise this ain't gonna do anytiengz
+                                    // let's hope all text's are in there own nodes, otherwise this ain't gonna do anything
                                     array_index_type_required = true;
                                 break;
                                 default:
@@ -639,10 +639,15 @@ WDAPI.Element.prototype.isSelected = function() {
  return this.ref + "->keys(" + xlateArgument(text, 'args') + ")";
  };
  */
-WDAPI.Element.prototype.sendKeys = function(text) {
+WDAPI.Element.prototype.type = function(text) {
     //return "$this->keys(" + xlateArgument(text) + ")";
-    return this.ref + "->value(" + xlateArgument(text) + ")";
+    return this.ref+"->value(" + xlateArgument(text) + ")";
 };
+
+WDAPI.Element.prototype.sendKeys = function(text) {
+    return  "$this->sendKeys("+this.ref+", " + xlateArgument(text) + ")";
+};
+
 
 WDAPI.Element.prototype.submit = function() {
     return this.ref + "->submit()";
@@ -656,6 +661,9 @@ WDAPI.Element.prototype.select = function(selectLocator) {
 //    return "Selenium::WebDriver::Support::Select.new(" + this.ref + ").select_by(:value, " + xlateArgument(selectLocator.string) + ")";
 //  }
 //  return "Selenium::WebDriver::Support::Select.new(" + this.ref + ").select_by(:text, " + xlateArgument(selectLocator.string) + ")";
+    if (selectLocator.type == 'value') {
+        return "$this->select(" + this.ref + ")->selectOptionByValue(" + xlateArgument(selectLocator.string) + ")";
+    }
     return "$this->select(" + this.ref + ")->selectOptionByLabel(" + xlateArgument(selectLocator.string) + ")";
 };
 
@@ -708,6 +716,15 @@ WDAPI.Utils.isAlertPresent = function() {
  *
  * @returns {bool}
  */
+SeleniumWebDriverAdaptor.prototype.getEval = function(param1, param2) {
+
+    var script = this.rawArgs[0];
+    return "$this->execute(array( "+
+        " 'script' => "+script+","+
+        " 'args'   => array() " +
+    "))";
+};
+
 SeleniumWebDriverAdaptor.prototype.isTextPresent = function() {
     var target = this.rawArgs[0];
     return '(bool)strpos(strip_tags($this->source()), ' + "'" + target + "'" + ')';

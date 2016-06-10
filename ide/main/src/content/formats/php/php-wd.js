@@ -395,9 +395,14 @@ WDAPI.Driver.searchContext = function(locatorType, locator, more) {
                 ? '$this->elements($this->using("id")->value(' + locatorString + '))'
                 : '$this->byId(' + locatorString + ')';
         case 'link':
+            // return more
+            //     ? '$this->elements($this->using("link text")->value(' + locatorString + '))'
+            //     : '$this->byLinkText(' + locatorString + ')';
+
+            // "link text does not seem to be working, using xpath instead"
             return more
-                ? '$this->elements($this->using("link text")->value(' + locatorString + '))'
-                : '$this->byLinkText(' + locatorString + ')';
+                ? '$this->elements($this->using("xpath")->value(\'//a[text()=' + locatorString + ']\'))'
+                : '$this->byXPath(\'//a[text()=' + locatorString + ']\')';
         case 'name':
             return more
                 ? '$this->elements($this->using("name")->value(' + locatorString + '))'
@@ -408,7 +413,7 @@ WDAPI.Driver.searchContext = function(locatorType, locator, more) {
                 : '$this->by("tag name", ' + locatorString + ')';
         case 'class':
             return more
-                ? '$this->elements($this->using("css selector")->value(["class=' + locatorString.replace(/"/g, "\\\"") + '"]))'
+                ? '$this->elements($this->using("css selector")->value("[class=' + locatorString.replace(/"/g, "\\\"") + ']"))'
                 : '$this->byCssSelector("[class=' + locatorString.replace(/"/g, "\\\"") + ']")';
         // DOM locators
         case 'implicit':
@@ -719,6 +724,13 @@ WDAPI.Utils.isAlertPresent = function() {
 SeleniumWebDriverAdaptor.prototype.getEval = function(param1, param2) {
 
     var script = this.rawArgs[0];
+
+    // add a return statement in case it isn't there yet
+    if(script.substr(1, 7) !== 'return ')
+    {
+        script = script.substr(0, 1)+'return '+script.substr(1);
+    }
+
     return "$this->execute(array( "+
         " 'script' => "+script+","+
         " 'args'   => array() " +

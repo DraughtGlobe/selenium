@@ -413,8 +413,8 @@ WDAPI.Driver.searchContext = function(locatorType, locator, more) {
                 : '$this->by("tag name", ' + locatorString + ')';
         case 'class':
             return more
-                ? '$this->elements($this->using("css selector")->value("[class=' + locatorString.replace(/"/g, "\\\"") + ']"))'
-                : '$this->byCssSelector("[class=' + locatorString.replace(/"/g, "\\\"") + ']")';
+                ? '$this->elements($this->using("css selector")->value(\'[class=' + locatorString + ']\'))'
+                : '$this->byCssSelector(\'[class=' + locatorString + ']\')';
         // DOM locators
         case 'implicit':
 
@@ -506,7 +506,9 @@ WDAPI.Driver.searchContext = function(locatorType, locator, more) {
                                     current_css = 'body';
                                 break;
                                 case 'elements':
+                                    // only works on input elements ( and not very well tested)
                                     array_index_type_required = true;
+                                    current_css += 'input';
                                 break;
                                 case 'childNodes':
                                     // let's hope all text's are in there own nodes, otherwise this ain't gonna do anything

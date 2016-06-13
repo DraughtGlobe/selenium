@@ -24,6 +24,8 @@ function FormatCollection(options, pluginManager) {
     this.presetFormats = [
         new InternalFormat(options, "default", "HTML", "html.js", true),
         // PHP
+        new InternalFormat(options, "phpformatter-wemarket-anonymous", "PHP / Wemarket Tests Anonymous", "php/php-wd-anonymous.js"),
+        new InternalFormat(options, "phpformatter-wemarket-user", "PHP / Wemarket Tests User", "php/php-wd-user.js"),
         new InternalFormat(options, "phpformatter", "PHP / WebDriver", "php/php-wd.js"),
 
     ];
